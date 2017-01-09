@@ -1,32 +1,42 @@
-public struct Request {
-  public init(_ method: String, _ path: String, _ body: String = "") {
-    self.method = method
-    self.path = path
-    self.body = body
-  }
-  public let method: String
-  public let path: String
-  public let body: String
-}
+public typealias Header = (String, String)
 
 public protocol RequestType {
   var body: String { get }
   var path: String { get }
   var method: String { get }
+  var headers: [Header] { get }
 }
 
 public protocol ResponseType {
   var body: String { get }
   var code: Int { get }
+  var headers: [Header] { get }
 }
+
+public struct Request {
+  public let method: String
+  public let path: String
+  public let body: String
+  public let headers: [Header]
+
+  public init(_ method: String, _ path: String, _ body: String = "", headers: [Header] = []) {
+    self.method = method
+    self.path = path
+    self.body = body
+    self.headers = headers
+  }
+}
+
 
 public struct Response {
   public let code: Int
   public let body: String
+  public let headers: [Header]
 
-  public init(_ code: Int, _ body: String) {
+  public init(_ code: Int, _ body: String, headers: [Header] = []) {
     self.code = code
     self.body = body
+    self.headers = headers
   }
 }
 
