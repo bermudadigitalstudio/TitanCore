@@ -17,6 +17,7 @@ public protocol RequestType {
 
 public protocol ResponseType {
   var body: String { get }
+  var code: Int { get }
 }
 
 public struct Response {
