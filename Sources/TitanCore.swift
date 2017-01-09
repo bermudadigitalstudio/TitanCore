@@ -37,21 +37,10 @@ public typealias Middleware = (RequestType, ResponseType) -> (RequestType, Respo
 public final class Titan {
   public init() {}
   private var middlewareStack = Array<Middleware>()
-  public func get(path: String, handler: @escaping Middleware) {
-    route(method: "GET", path: path, handler: handler)
+  public func middleware(middleware: @escaping Middleware) {
+    middlewareStack.append(middleware)
   }
-
-  func route(method: String, path: String, handler: @escaping Middleware) {
-    let routeWare: Middleware = { (req, res) in
-      guard req.path == path && req.method == method else {
-        return (req, res)
-      }
-      return handler(req, res)
-    }
-    middlewareStack.append(routeWare)
-  }
-
-  public func app(request: Request) -> ResponseType {
+  public func app(request: RequestType) -> ResponseType {
     typealias Result = (RequestType, ResponseType)
 
     let initialReq = request

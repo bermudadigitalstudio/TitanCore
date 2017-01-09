@@ -1,6 +1,6 @@
 import XCTest
-@testable import titan_coreTests
+@testable import TitanCoreTests
 
 XCTMain([
-     testCase(titan_coreTests.allTests),
+testCase(TitanCoreTests.allTests),
 ])
