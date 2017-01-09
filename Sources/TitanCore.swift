@@ -1,3 +1,4 @@
+/// Little known fact: HTTP headers need not be unique!
 public typealias Header = (String, String)
 
 public protocol RequestType {
@@ -9,6 +10,7 @@ public protocol RequestType {
 
 public protocol ResponseType {
   var body: String { get }
+  /// Status code. We have deliberately eschewed a status line since HTTP/2 ignores it, rarely used.
   var code: Int { get }
   var headers: [Header] { get }
 }
