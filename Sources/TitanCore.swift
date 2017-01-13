@@ -50,12 +50,12 @@ public final class Titan {
     public init() {}
     private var functionStack = Array<Function>()
 
-    /// add a function to Titan’s request, response processing flow
+    /// add a function to Titan’s request / response processing flow
     public func addFunction(function: @escaping Function) {
         functionStack.append(function)
     }
 
-    /// Titan app instance, should be given to a server
+    /// Titan handler which should be given to a server
     public func app(request: RequestType) -> ResponseType {
         typealias Result = (RequestType, ResponseType)
 
