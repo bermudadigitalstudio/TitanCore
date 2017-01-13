@@ -3,7 +3,7 @@ import XCTest
 
 final class MiddlewareTests: XCTestCase {
     func testCanAddMiddleware() {
-        Titan().middleware({ (req: RequestType, res: ResponseType) -> (RequestType, ResponseType) in
+        Titan().middleware({ (req: inout RequestType, res: inout ResponseType) -> (RequestType, ResponseType) in
             print(req)
             print(res)
             return (Request("GET", ""), Response(-1, ""))

@@ -59,8 +59,9 @@ public final class Titan {
         let initialRes = Response(-1, "")
         let initial: Result = (initialReq, initialRes)
         // HOW TO FIX THAT? 😭
-        var res = middlewareStack.reduce(initial) { (res, next) -> Result in
-            return next(res.0, res.1)
+        let res = middlewareStack.reduce(initial) { (res, next) -> Result in
+            var m = res
+            return next(&m.0, &m.1)
         }
         return res.1
     }
