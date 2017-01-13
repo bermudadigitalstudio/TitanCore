@@ -2,24 +2,24 @@
 public typealias Header = (String, String)
 
 public protocol RequestType {
-    var body: String { get }
-    var path: String { get }
-    var method: String { get }
-    var headers: [Header] { get }
+    var body: String { get set }
+    var path: String { get set }
+    var method: String { get set }
+    var headers: [Header] { get set }
 }
 
 public protocol ResponseType {
-    var body: String { get }
+    var body: String { get set }
     /// Status code. We have deliberately eschewed a status line since HTTP/2 ignores it, rarely used.
-    var code: Int { get }
-    var headers: [Header] { get }
+    var code: Int { get set }
+    var headers: [Header] { get set }
 }
 
 public struct Request {
-    public let method: String
-    public let path: String
-    public let body: String
-    public let headers: [Header]
+    public var method: String
+    public var path: String
+    public var body: String
+    public var headers: [Header]
 
     public init(_ method: String, _ path: String, _ body: String = "", headers: [Header] = []) {
         self.method = method
@@ -30,9 +30,9 @@ public struct Request {
 }
 
 public struct Response {
-    public let code: Int
-    public let body: String
-    public let headers: [Header]
+    public var code: Int
+    public var body: String
+    public var headers: [Header]
 
     public init(_ code: Int, _ body: String, headers: [Header] = []) {
         self.code = code
@@ -45,11 +45,11 @@ extension Response: ResponseType {}
 
 extension Request: RequestType {}
 
-public typealias Middleware = (RequestType, ResponseType) -> (RequestType, ResponseType)
+public typealias Middleware = (inout RequestType, inout ResponseType) -> (RequestType, ResponseType)
 public final class Titan {
     public init() {}
     private var middlewareStack = Array<Middleware>()
-    public func middleware(middleware: @escaping Middleware) {
+    public func middleware(_ middleware: @escaping Middleware) {
         middlewareStack.append(middleware)
     }
     public func app(request: RequestType) -> ResponseType {
@@ -58,7 +58,8 @@ public final class Titan {
         let initialReq = request
         let initialRes = Response(-1, "")
         let initial: Result = (initialReq, initialRes)
-        let res = middlewareStack.reduce(initial) { (res, next) -> Result in
+        // HOW TO FIX THAT? 😭
+        var res = middlewareStack.reduce(initial) { (res, next) -> Result in
             return next(res.0, res.1)
         }
         return res.1
