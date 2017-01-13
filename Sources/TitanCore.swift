@@ -16,10 +16,10 @@ public protocol ResponseType {
 }
 
 public struct Request {
-    public let method: String
-    public let path: String
-    public let body: String
-    public let headers: [Header]
+    public var method: String
+    public var path: String
+    public var body: String
+    public var headers: [Header]
 
     public init(_ method: String, _ path: String, _ body: String = "", headers: [Header] = []) {
         self.method = method
@@ -30,9 +30,9 @@ public struct Request {
 }
 
 public struct Response {
-    public let code: Int
-    public let body: String
-    public let headers: [Header]
+    public var code: Int
+    public var body: String
+    public var headers: [Header]
 
     public init(_ code: Int, _ body: String, headers: [Header] = []) {
         self.code = code
