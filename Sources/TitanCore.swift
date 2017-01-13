@@ -54,14 +54,12 @@ public final class Titan {
     }
     public func app(request: RequestType) -> ResponseType {
         typealias Result = (RequestType, ResponseType)
-
         let initialReq = request
         let initialRes = Response(-1, "")
         let initial: Result = (initialReq, initialRes)
-        // HOW TO FIX THAT? 😭
         let res = middlewareStack.reduce(initial) { (res, next) -> Result in
-            var m = res
-            return next(&m.0, &m.1)
+            var mutableRes = res
+            return next(&mutableRes.0, &mutableRes.1)
         }
         return res.1
     }
