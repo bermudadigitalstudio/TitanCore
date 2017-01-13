@@ -51,7 +51,7 @@ public final class Titan {
     private var functionStack = Array<Function>()
 
     /// add a function to Titan’s request / response processing flow
-    public func addFunction(function: @escaping Function) {
+    public func addFunction(_ function: @escaping Function) {
         functionStack.append(function)
     }
 

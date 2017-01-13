@@ -4,7 +4,7 @@ import XCTest
 final class FunctionTests: XCTestCase {
 
     func testCanAddFunction() {
-        Titan().addFunction(function: { (req: RequestType, res: ResponseType) -> (RequestType, ResponseType) in
+        Titan().addFunction({ (req: RequestType, res: ResponseType) -> (RequestType, ResponseType) in
             print(req)
             print(res)
             return (Request("GET", ""), Response(-1, ""))
