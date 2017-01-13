@@ -29,7 +29,6 @@ public struct Request {
   }
 }
 
-
 public struct Response {
   public let code: Int
   public let body: String
@@ -46,20 +45,24 @@ extension Response: ResponseType {}
 
 extension Request: RequestType {}
 
-public typealias Middleware = (RequestType, ResponseType) -> (RequestType, ResponseType)
+public typealias Function = (RequestType, ResponseType) -> (RequestType, ResponseType)
 public final class Titan {
   public init() {}
-  private var middlewareStack = Array<Middleware>()
-  public func middleware(middleware: @escaping Middleware) {
-    middlewareStack.append(middleware)
+  private var functionStack = Array<Function>()
+    
+    /// add a function to Titan’s request, response processing flow
+  public func addFunction(function: @escaping Function) {
+    functionStack.append(function)
   }
+    
+    /// Titan app instance, should be given to a server
   public func app(request: RequestType) -> ResponseType {
     typealias Result = (RequestType, ResponseType)
 
     let initialReq = request
     let initialRes = Response(-1, "")
     let initial: Result = (initialReq, initialRes)
-    let res = middlewareStack.reduce(initial) { (res, next) -> Result in
+    let res = functionStack.reduce(initial) { (res, next) -> Result in
       return next(res.0, res.1)
     }
     return res.1
