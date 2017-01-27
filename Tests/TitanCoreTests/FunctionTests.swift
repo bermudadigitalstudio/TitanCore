@@ -7,7 +7,9 @@ final class FunctionTests: XCTestCase {
         Titan().addFunction({ (req: RequestType, res: ResponseType) -> (RequestType, ResponseType) in
             print(req)
             print(res)
-            return (Request("GET", ""), Response(-1, ""))
+            var newReq = req.copy()
+            newReq.headers.append(("hello", "world"))
+            return (newReq, Response(code: -1, body: "", headers: []))
         })
     }
 

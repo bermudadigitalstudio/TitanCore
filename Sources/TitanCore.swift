@@ -1,5 +1,17 @@
 /// Little known fact: HTTP headers need not be unique!
-public typealias Header = (String, String)
+public typealias Header = (name: String, value: String)
+
+#if swift(>=3.1)
+extension Array where Element == Header {
+    public func process() -> [String : String] {
+        var ret: [String:String] = [:]
+            for (n, v) in self {
+                ret[n] = v
+            }
+        return ret
+    }
+}
+#endif
 
 public protocol RequestType {
     var body: String { get }
@@ -21,7 +33,7 @@ public struct Request {
     public var body: String
     public var headers: [Header]
 
-    public init(_ method: String, _ path: String, _ body: String = "", headers: [Header] = []) {
+    public init(method: String, path: String, body: String, headers: [Header]) {
         self.method = method
         self.path = path
         self.body = body
@@ -34,7 +46,7 @@ public struct Response {
     public var body: String
     public var headers: [Header]
 
-    public init(_ code: Int, _ body: String, headers: [Header] = []) {
+    public init(code: Int, body: String, headers: [Header]) {
         self.code = code
         self.body = body
         self.headers = headers
@@ -42,8 +54,31 @@ public struct Response {
 }
 
 extension Response: ResponseType {}
-
 extension Request: RequestType {}
+
+extension Response {
+    public init(response: ResponseType) {
+        self.init(code: response.code, body: response.body, headers: response.headers)
+    }
+}
+
+extension Request {
+    public init(request: RequestType) {
+        self.init(method: request.method, path: request.path, body: request.body, headers: request.headers)
+    }
+}
+
+extension ResponseType {
+    public func copy() -> Response {
+        return Response(response: self)
+    }
+}
+
+extension RequestType {
+    public func copy() -> Request {
+        return Request(request: self)
+    }
+}
 
 public typealias Function = (RequestType, ResponseType) -> (RequestType, ResponseType)
 public final class Titan {
@@ -60,7 +95,7 @@ public final class Titan {
         typealias Result = (RequestType, ResponseType)
 
         let initialReq = request
-        let initialRes = Response(-1, "")
+      let initialRes = Response(code: -1, body: "", headers: [])
         let initial: Result = (initialReq, initialRes)
         let res = functionStack.reduce(initial) { (res, next) -> Result in
             return next(res.0, res.1)
