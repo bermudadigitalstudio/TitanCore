@@ -1,18 +1,6 @@
 /// Little known fact: HTTP headers need not be unique!
 public typealias Header = (name: String, value: String)
 
-#if swift(>=3.1)
-extension Array where Element == Header {
-    public func process() -> [String : String] {
-        var ret: [String:String] = [:]
-            for (n, v) in self {
-                ret[n] = v
-            }
-        return ret
-    }
-}
-#endif
-
 public protocol RequestType {
     var body: String { get }
     var path: String { get }
