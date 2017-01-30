@@ -13,12 +13,8 @@ final class FunctionTests: XCTestCase {
         })
     }
 
-    func testFunctionIsCalled() {
-    }
-
     static var allTests: [(String, (FunctionTests) -> () throws -> Void)] {
         return [
-            ("testFunctionIsCalled", testFunctionIsCalled),
             ("testCanAddFunction", testCanAddFunction),
         ]
     }
