@@ -83,7 +83,7 @@ public final class Titan {
         typealias Result = (RequestType, ResponseType)
 
         let initialReq = request
-      let initialRes = Response(code: -1, body: "", headers: [])
+        let initialRes = Response(code: -1, body: "", headers: [])
         let initial: Result = (initialReq, initialRes)
         let res = functionStack.reduce(initial) { (res, next) -> Result in
             return next(res.0, res.1)
