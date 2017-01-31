@@ -71,7 +71,7 @@ extension RequestType {
 public typealias Function = (RequestType, ResponseType) -> (RequestType, ResponseType)
 public final class Titan {
     public init() {}
-    private var functionStack = Array<Function>()
+    private var functionStack = [Function]()
 
     /// add a function to Titan’s request / response processing flow
     public func addFunction(_ function: @escaping Function) {

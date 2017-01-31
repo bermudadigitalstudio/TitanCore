@@ -45,7 +45,10 @@ final class FunctionTests: XCTestCase {
       request = req
       return (req, res)
     }
-    _ = t.app(request: Request(method: "METHOD", path: "/PATH", body: "body", headers: [("some-header", "some-value")]))
+    _ = t.app(request: Request(method: "METHOD",
+                               path: "/PATH",
+                               body: "body",
+                               headers: [("some-header", "some-value")]))
     XCTAssertEqual(request.body, "body")
     XCTAssertEqual(request.method, "METHOD")
     XCTAssertEqual(request.path, "/PATH")
@@ -56,10 +59,14 @@ final class FunctionTests: XCTestCase {
   func testResponseComesFromLastResponseReturned() {
     let t = Titan()
     t.addFunction { req, _ in
-      return (req, Response(code: 100, body: "not this body", headers: [("content-type-WRONG", "application/json")]))
+      return (req, Response(code: 100,
+                            body: "not this body",
+                            headers: [("content-type-WRONG", "application/json")]))
     }
     t.addFunction { req, _ in
-      return (req, Response(code: 700, body: "response body", headers: [("content-type", "text/plain")]))
+      return (req, Response(code: 700,
+                            body: "response body",
+                            headers: [("content-type", "text/plain")]))
     }
     let response = t.app(request: Request(method: "", path: "", body: "", headers: []))
     XCTAssertEqual(response.body, "response body")
@@ -71,7 +78,13 @@ final class FunctionTests: XCTestCase {
   func testFunctionInputIsOutputOfPrecedingFunction() {
     let t = Titan()
     t.addFunction { _ in
-      return (Request(method: "METHOD", path: "/PATH", body: "body", headers: [("some-header", "some-value")]), Response(code: 700, body: "response body", headers: [("content-type", "text/plain")]))
+      return (Request(method: "METHOD",
+                      path: "/PATH",
+                      body: "body",
+                      headers: [("some-header", "some-value")]),
+                                Response(code: 700,
+                                         body: "response body",
+                                         headers: [("content-type", "text/plain")]))
     }
     var request: RequestType!, response: ResponseType!
     t.addFunction { req, res in
@@ -100,7 +113,7 @@ final class FunctionTests: XCTestCase {
             ("testFunctionsAreInvokedInOrder", testFunctionsAreInvokedInOrder),
             ("testFunctionInputIsOutputOfPrecedingFunction", testFunctionInputIsOutputOfPrecedingFunction),
             ("testResponseComesFromLastResponseReturned", testResponseComesFromLastResponseReturned),
-            ("testFirstFunctionRegisteredReceivesRequest", testFirstFunctionRegisteredReceivesRequest),
+            ("testFirstFunctionRegisteredReceivesRequest", testFirstFunctionRegisteredReceivesRequest)
         ]
     }
 }
