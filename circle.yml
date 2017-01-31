@@ -3,6 +3,9 @@
 # learn more at https://karthikv.net/articles/circleci-docker-flow/
 # and https://circleci.com/docs/docker/
 
+version: 2
+executorType: docker
+
 machine:
   services:
     - docker
