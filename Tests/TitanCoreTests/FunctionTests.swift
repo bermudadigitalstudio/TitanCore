@@ -43,7 +43,7 @@ final class FunctionTests: XCTestCase {
             return (request, response)
         }
 
-        _ = t.app(request: Request(method: "", path: "", body: "", bodyData: Data(), headers: []))
+        _ = t.app(request: Request(method: "", path: "", body: Data(), headers: []))
         XCTAssertEqual(accumulator.count, 4)
         XCTAssertEqual(accumulator[3], 3)
     }
@@ -58,10 +58,9 @@ final class FunctionTests: XCTestCase {
 
         _ = t.app(request: Request(method: "METHOD",
                                    path: "/PATH",
-                                   body: "body",
-                                   bodyData: "body".data(using: .utf8)!,
+                                   body: "body".data(using: .utf8)!,
                                    headers: [("some-header", "some-value")]))
-        XCTAssertEqual(request.body, "body")
+        XCTAssertEqual(request.bodyString, "body")
         XCTAssertEqual(request.method, "METHOD")
         XCTAssertEqual(request.path, "/PATH")
         XCTAssertEqual(request.headers.first!.name, "some-header")
@@ -92,8 +91,8 @@ final class FunctionTests: XCTestCase {
             return (req, Response(code: 500, body: Data(), headers: []))
         }
 
-        let response = t.app(request: Request(method: "", path: "", body: "", bodyData: Data(), headers: []))
-        XCTAssertEqual(response.body, "response body".data(using: .utf8))
+        let response = t.app(request: Request(method: "", path: "", body: Data(), headers: []))
+        XCTAssertEqual(response.bodyString, "response body")
         XCTAssertEqual(response.code, 700)
         XCTAssertEqual(response.headers.first!.name, "content-type")
         XCTAssertEqual(response.headers.first!.value, "text/plain")
@@ -105,8 +104,7 @@ final class FunctionTests: XCTestCase {
             do {
                 return (Request(method: "METHOD",
                                 path: "/PATH",
-                                body: "body",
-                                bodyData: "response body".data(using: .utf8)!,
+                                body: "body".data(using: .utf8)!,
                                 headers: [("some-header", "some-value")]),
                         try Response(code: 700,
                                      body: "response body",
@@ -115,8 +113,7 @@ final class FunctionTests: XCTestCase {
             }
             return (Request(method: "METHOD",
                             path: "/PATH",
-                            body: "body",
-                            bodyData: "response body".data(using: .utf8)!,
+                            body: "response body".data(using: .utf8)!,
                             headers: [("some-header", "some-value")]), Response(code: 500, body: Data(), headers: []))
         }
         var request: RequestType!, response: ResponseType!
@@ -126,9 +123,9 @@ final class FunctionTests: XCTestCase {
             return (req, res)
         }
 
-        _ = t.app(request: Request(method: "", path: "", body: "", bodyData: Data(), headers: []))
+        _ = t.app(request: Request(method: "", path: "", body: Data(), headers: []))
 
-        XCTAssertEqual(request.body, "body")
+        XCTAssertEqual(request.bodyString, "body")
         XCTAssertEqual(request.method, "METHOD")
         XCTAssertEqual(request.path, "/PATH")
         XCTAssertEqual(request.headers.first!.name, "some-header")

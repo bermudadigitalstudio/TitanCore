@@ -3,11 +3,11 @@ import Foundation
 /// Little known fact: HTTP headers need not be unique!
 public typealias Header = (name: String, value: String)
 
-public enum ResponseError: Error {
+public enum TitanError: Error {
     case dataConversion
 }
 
-extension ResponseError: LocalizedError {
+extension TitanError: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .dataConversion:
@@ -28,8 +28,7 @@ extension ResponseError: LocalizedError {
     }}
 
 public protocol RequestType {
-    var body: String { get }
-    var bodyData: Data { get }
+    var body: Data { get }
     var path: String { get }
     var method: String { get }
     var headers: [Header] { get }
@@ -45,15 +44,23 @@ public protocol ResponseType {
 public struct Request {
     public var method: String
     public var path: String
-    public var body: String
-    public var bodyData: Data
+    public var body: Data
     public var headers: [Header]
 
-    public init(method: String, path: String, body: String, bodyData: Data, headers: [Header]) {
+    public init(method: String, path: String, body: String, headers: [Header]) throws {
+        self.method = method
+        self.path = path
+        guard let data = body.data(using: .utf8) else {
+            throw TitanError.dataConversion
+        }
+        self.body = data
+        self.headers = headers
+    }
+
+    public init(method: String, path: String, body: Data, headers: [Header]) {
         self.method = method
         self.path = path
         self.body = body
-        self.bodyData = bodyData
         self.headers = headers
     }
 }
@@ -66,7 +73,7 @@ public struct Response {
     public init(code: Int, body: String, headers: [Header]) throws {
         self.code = code
         guard let data = body.data(using: .utf8) else {
-            throw ResponseError.dataConversion
+            throw TitanError.dataConversion
         }
         self.body = data
         self.headers = headers
@@ -90,17 +97,25 @@ extension Response {
 
 extension Request {
     public init(request: RequestType) {
-        self.init(method: request.method, path: request.path, body: request.body, bodyData: request.bodyData, headers: request.headers)
+        self.init(method: request.method, path: request.path, body: request.body, headers: request.headers)
     }
 }
 
 extension ResponseType {
+    public var bodyString: String? {
+        return String(data: self.body, encoding: .utf8)
+    }
+
     public func copy() -> Response {
         return Response(response: self)
     }
 }
 
 extension RequestType {
+    public var bodyString: String? {
+        return String(data: self.body, encoding: .utf8)
+    }
+
     public func copy() -> Request {
         return Request(request: self)
     }
