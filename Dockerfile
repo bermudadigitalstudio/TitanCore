@@ -3,7 +3,7 @@ FROM swift:4
 
 WORKDIR /code
 
-COPY Package@swift-4.0.swift /code/Package.swift
+COPY Package.swift /code
 RUN swift package resolve
 
 # Assuming that tests change less than code, so put Tests before Sources copy
